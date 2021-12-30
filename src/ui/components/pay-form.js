@@ -26,14 +26,9 @@ export function PayForm() {
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        // Make sure to change this to your payment completion page
-        return_url: "http://localhost:3000/thanks/success",
+        return_url: process.env.NEXT_PUBLIC_BASE_URL,
       },
     });
-
-    // This point will only be reached if there is an immediate error when
-    // confirming the payment. Otherwise, your customer will be redirected to
-    // your `return_url`.
 
     if (error.type === "card_error" || error.type === "validation_error") {
       setMessage(error.message);

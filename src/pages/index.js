@@ -12,8 +12,6 @@ export default function IndexPage({ mercadoPagoUrl }) {
 
   const stripePromise = useStripePromise();
 
-  // console.log(stripePromise, stripeClientSecret);
-
   return (
     <div className="flex">
       <div className="flex space-x-20 mx-auto py-32">
@@ -95,6 +93,8 @@ export default function IndexPage({ mercadoPagoUrl }) {
   );
 }
 
+IndexPage.getLayout = getLayout;
+
 export async function getServerSideProps() {
   const isProd = process.env.NODE_ENV === "production";
 
@@ -106,30 +106,33 @@ export async function getServerSideProps() {
     items: [
       {
         id: "00000001",
-        // currency_id: "PEN",
+        currency_id: "USD",
         title: "Modern Studio with One Queen Bed",
         quantity: 1,
         unit_price: 132.2,
       },
     ],
     external_reference: "00000001",
+    notification_url: "https://hookb.in/XkKPRnp9wzsDYMQQYapR",
     back_urls: {
-      failure: "http://localhost:3000/thanks/failure",
-      success: "http://localhost:3000/thanks/success",
+      failure: `${process.env.NEXT_PUBLIC_BASE_URL}/thanks/failure`,
+      success: `${process.env.NEXT_PUBLIC_BASE_URL}/thanks/success`,
     },
     binary_mode: true,
   });
 
+  const mercadoPagoUrl = isProd
+    ? response.init_point
+    : response.sandbox_init_point;
+
   return {
     props: {
-      mercadoPagoUrl: isProd
-        ? response.init_point
-        : response.sandbox_init_point,
+      mercadoPagoUrl,
     },
   };
 }
 
-// export function PayFormAbajo() {
+// export function PayForm() {
 //   <form className="flex flex-col space-y-6">
 //     <FormField title="Email" />
 //     <FormField title="Card information">
